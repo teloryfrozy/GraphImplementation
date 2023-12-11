@@ -10,20 +10,20 @@
 
 """
 Problème et Contrainte:
-    - Méthode chemins à vérifier
+    - Méthode paths à vérifier
 
 Liste des méthodes à implémenter restantes:
     - étiqueté: permet de savoir si les arrêtes ont des valeurs attribuées
     - valué (= pondéré): permet de savoir si le graphe est valué
-    - extrémités: permet de connaitre les 2 sommets adajcants à une arrête, permet de calculer le cout (ou le temps) d'un transfert par exemple
+    - extrémités: permet de connaitre les 2 nodes adajcants à une arrête, permet de calculer le cout (ou le temps) d'un transfert par exemple
     - poids d'une chaine: permet de connaitre le poids d'une chaine si le graphe est valué
     - connexe ("fortement connexe": graphe orienté): permet de savoir si un graphe est connexe ou non
 """
-
 from random import choice
 
+
 class Graph:
-    """Class to create a graph."""
+    """Class to implement a graph"""
 
     def __init__(self, adj={}):
         """Creates a graph defined by its adjacency list.
@@ -41,127 +41,138 @@ class Graph:
         """Returns the neighbors of node or empty list if node not found"""
         return self.adj.get(node, [])
 
-    def getListeAdj(self):
-        """Renvoie la liste d'adjacence du graphe."""
+    def get_adjacency_list(self):
+        """Returns the adjacency list of the graph"""
         return self.adj
 
-    def oriente(self):
-        """Renvoie Vrai si le graphe est orienté, Faux sinon.
+    def is_oriented(self):
+        """Returns True if the graph is directed, False otherwise.
 
-        Algorithme:
-            Parcours des lignes et des colonnes
-                Comparaison des lignes et des colonnes
-                Si il existe une différence
-                    Renvoyer Faux
-            Renvoyer Vrai
+        Algorithm:
+            Traverse rows and columns
+                Compare rows and columns
+                If there is a difference
+                    Return False
+            Return True
         """
-        m = self.getMatrice()
-        for i in range(self.getOrdre()):
-            ligne = m[i]
-            colonne = [m[j][i] for j in range(self.getOrdre())]
-            if ligne != colonne:
+        matrix = self.get_matrix()
+        for i in range(self.get_order()):
+            row = matrix[i]
+            column = [matrix[j][i] for j in range(self.get_order())]
+            if row != column:
                 return True
         return False
 
-    def complet(self):
-        """Renvoie Vrai si le graphe est complet, Faux sinon."""
+    def is_complete(self):
+        """Returns True if the graph is complete, False otherwise"""
         for node in self.adj.keys():
-            if self.getDegre(node) != self.getOrdre()-1:
+            if self.get_degree(node) != self.get_order()-1:
                 return False
         return True
 
-    def getOrdre(self):
-        """Renvoie l'ordre du graphe."""
+    def get_order(self):
+        """Returns the order of the graph"""
         return len(self.adj.keys())
 
-    def getDegre(self, s):
-        """Renvoie le degré du sommet s."""
-        if s in self.adj.keys():
-            return len(self.adj[s])
-        return "le sommet " + s + " n'existe pas."
+    def get_degree(self, node):
+        """Returns the degree of node"""
+        return len(self.adj[node]) if node in self.adj.keys() else None
 
-    def getSommets(self):
-        """Retourne la liste des sommets du graphe."""
+    def get_vertices(self) -> list:
+        """Returns the list of vertices in the graph"""
         return list(self.adj.keys())
 
-    def getMatrice(self):
-        """Renvoie la matrice d'adjacence d'une liste d'adjacence.
+    def get_matrix(self):
+        """Returns the adjacency matrix from an adjacency list.
 
-        Algorithme:
-            Création d'une matrice nulle de ordre colonnes et de ordre lignes
-            Parcours des clés du graphe
-                i: indice de la clé dans le dictionnaire
-                Parcours des voisins des clés
-                    j: indice de la valeur dans la liste
+        Algorithm:
+            Create a null matrix of column order and row order
+            Traverse the keys of the graph
+                i: index of the key in the dictionary
+                Traverse the neighbors of the keys
+                    j: index of the value in the list
                     m[j][i]: 1
         """
-        ordre = self.getOrdre()
-        m = [[0 for i in range(ordre)] for i in range(ordre)]
+        order = self.get_order()
+        m = [[0 for i in range(order)] for i in range(order)]
         i = -1
-        ls = self.getSommets()
-        ls.sort()
-        for sommet in ls:
+        vl = self.get_vertices()
+        vl.sort()
+        
+        for node in vl:
             i += 1
-            for j in range(len(self.adj[sommet])):
+            for j in range(len(self.adj[node])):
                 m[i][j] = 1
         return m
 
-    def printMatrice(self):
-        """Affiche la matrice d'adjacence d'un graphe non orienté ou les
-        matrices des successeurs et des prédecesseurs d'un graphe orienté.
+    def show_matrix(self):
+        """Displays the adjacency matrix of an undirected graph or the
+        successor and predecessor matrices of a directed graph.
         """
-        if self.oriente():
-            print("\nMatrice d'adjacence des prédecesseurs")
-            for ligne in Graphe(self.getPred()).getMatrice():
-                print(ligne)
-            print("\nMatrice d'adjacence des successeurs")
+        if self.is_oriented():
+            print("\nAdjacency matrix of predecessors")
+            for line in Graph(self.get_pred()).get_matrix():
+                print(line)
+            print("\nAdjacency matrix of successors")
         else:
-            print("\nMatrice d'adjacence du graphe")
-        for ligne in self.getMatrice():
-            print(ligne)
+            print("\nAdjacency matrix of the graph")
+        for line in self.get_matrix():
+            print(line)
 
-    def getPred(self):
-        """Renvoie la liste d'adjacence des prédecesseurs d'un graphe orienté.
+    def get_pred(self):
+        """Returns the adjacency list of predecessors in a directed graph.
 
-        Algorithme:
+        Algorithm:
             pred: {}
-            Pour chaque sommet du graphe
-                pred[sommet]: ()
-                Pour chaque voisin du sommet
-                    pred[voisin]+: sommet
+            For each node in the graph
+                pred[node]: ()
+                For each neighbor of the node
+                    pred[neighbor] += node
         """
         pred = {}
-        ls = self.getSommets()
-        ls.sort()
-        for sommet in ls:
-            if sommet not in pred.keys():
-                pred[sommet] = ()
-            for voisin in self.adj[sommet]:
-                if voisin not in pred.keys():
-                    pred[voisin] = tuple(sommet)
-                else:
-                    pred[voisin] += tuple(sommet)
-        return pred
+        vl = self.get_vertices()
+        vl.sort()
 
-    # Parcours
-    def BFS(self, sommet):
-        """Renvoie le parcours en largeur d'un graphe.
+        for node in vl:
+            if node not in pred.keys():
+                pred[node] = ()
+            for voisin in self.adj[node]:
+                if voisin not in pred.keys():
+                    pred[voisin] = tuple(node)
+                else:
+                    pred[voisin] += tuple(node)
+        return pred
+    
+    def set_neighbors(self, node, neighbor):
+        """Associates the tuple of neighbors 'neighbor' with the specified 'node'.
+
+        Parameters:
+            - (str) node: The node to which neighbors are associated
+            - (tuple) neighbor: The adjacency list representing neighbors of the node
+        """
+        self.adj[node] = neighbor
+    
+    ###################################################
+    #     Graph Traversal Algorithms: DFS and BFS     #
+    ###################################################
+    def BFS(self, node):
+        """Returns the breadth-first traversal of a graph.
 
         Arguments:
-            - (str) sommet: sommet quelconque du graphe
+            - (str) node: any node in the graph
 
-        Algorithme:
-            tmp: file contenant sommet
-            parcours: liste vide
-            Tant que temp n'est pas vide
-                x: defiler(temp)
-                Ajouter x dans parcours
-                Pour chaque voisin de x
-                    Si voisin n'est pas marqué
-                        Ajouter voisin dans temp
-            Renvoyer parcours
+        Algorithm:
+            tmp: queue containing node
+            traversal: empty list
+            While tmp is not empty
+                x: dequeue(tmp)
+                Add x to traversal
+                For each neighbor of x
+                    If neighbor is not marked
+                        Add neighbor to tmp
+            Return traversal
         """
-        parcours, temp = [], [sommet]
+        parcours, temp = [], [node]
         while temp != []:
             x = temp.pop(0)
             if type(self.adj[x]) is tuple:
@@ -174,104 +185,91 @@ class Graph:
                     temp.append(voisin)
         return parcours
 
-    def DFS(self, sommet):
-        """Renvoie un parcours en largeur d'un graphe.
+    def DFS(self, node):
+        """Returns a breadth-first traversal of a graph.
 
         Arguments:
-            - (str) sommet: sommet quelconque du graphe
+            - (str) node: any node in the graph
 
-        Algorithme:
-            sommets_visites: []
-            sommets_fermes: []
-            pile: []
-            Tant que pile n'est pas vide
-                tmp: premier sommet de la pile
-                voisins: [liste des voisins de tmp non visités]
-                Si voisins n'est pas vide
-                    depiler(pile)
-                    sommets_fermes + tmp
-                Sinon
-                    v: voisin aléatoire de voisins
-                    sommets_visites + v
-                    empiler(v) dans pile
-            Renvoyer sommets_fermes
+        Algorithm:
+            visited_nodes: []
+            closed_nodes: []
+            stack: []
+            While stack is not empty
+                tmp: first node in the stack
+                neighbors: [list of unvisited neighbors of tmp]
+                If neighbors is not empty
+                    pop(stack)
+                    closed_nodes + tmp
+                Else
+                    rd_n: random neighbor from neighbors
+                    visited_nodes + rd_n
+                    push(v) into stack
+            Return closed_nodes
         """
-        sommets_visites, sommets_fermes, pile = [sommet], [], [sommet]
-        while pile != []:
-            tmp = pile[-1]
+        visited_nodes, closed_nodes, stack = [node], [], [node]
+        while stack != []:
+            tmp = stack[-1]
             if type(self.adj[tmp]) is tuple:
                 l = list(self.adj[tmp])
             else:
                 l = [self.adj[tmp]]
-            voisins = [voisin for voisin in l if voisin not in sommets_visites]
-            if voisins != []:
-                v = choice(voisins)
-                sommets_visites.append(v)
-                pile.append(v)
+            
+            # --- Unvisited neighbors --- #
+            neighbors = [voisin for voisin in l if voisin not in visited_nodes]
+            if neighbors != []:
+                rd_n = choice(neighbors)
+                visited_nodes.append(rd_n)
+                stack.append(rd_n)
             else:
-                pile.pop(-1)
-                sommets_fermes.append(tmp)
-        return sommets_fermes
+                stack.pop(-1)
+                closed_nodes.append(tmp)
+        return closed_nodes
 
-    def chemins(self, depart, arrivee):
-        """Renvoie les chemins de depart à arrivee.
+
+    def paths(self, departure, arrival):
+        """Returns the paths from 'departure' to 'arrival'.
 
         Arguments:
-            - (str) depart: sommet de départ
-            - (str) arrivee: sommet d'arriée
+            - (str) departure: starting node
+            - (str) arrival: destination node
         """
-        chemins, visites, file_temp = [], [depart], [[depart]]
-        while file_temp != []:
-            x = file_temp.pop(0)
-            if type(self.adj[x[-1]]) is tuple:
-                l = list(self.adj[x[-1]])
-            else:
-                l = [self.adj[x[-1]]]
-            for voisin in l:
-                if voisin == arrivee:
-                    chemins.append(x + [voisin])
-                elif voisin not in x:
-                    if voisin not in visites:
-                        visites.append(voisin)
-                    file_temp.append(x + [voisin])
-        return chemins
+        paths, visited, tmp_stack = [], [departure], [[departure]]
+        while tmp_stack != []:
+            x = tmp_stack.pop(0)
+            neighbors = self.adj[x[-1]] if type(self.adj[x[-1]]) is tuple else [self.adj[x[-1]]]
 
-    def courtChemin(self, chemins):
-        """Renvoie le plus court chemin parmis les chemins d'un sommet à un autre.
+            for neighbor in neighbors:
+                if neighbor == arrival:
+                    paths.append(x + [neighbor])
+                elif neighbor not in x:
+                    if neighbor not in visited:
+                        visited.append(neighbor)
+                    tmp_stack.append(x + [neighbor])
+        return paths
+
+    def get_shortest_path(self, paths: list):
+        """Returns the shortest path among the paths from one node to another.
 
         Argument:
-            - (list) chemins: liste de tout les chemins d'un graphe d'un point à un autre
+            - (list) paths: list of all paths from a node to another in a graph
         """
-        court_chemin = chemins[0]
-        for chemin in chemins[1:]:
-            if len(chemin) < len(court_chemin):
-                court_chemin = chemin
-        return court_chemin
+        shortest_path = paths[0]
 
-    # Modifieurs
-    def setVoisins(self, s, v):
-        """Ajoute le tuple des voisins v associés au sommet s.
+        for path in paths[1:]:
+            if len(path) < len(shortest_path):
+                shortest_path = path
+        return shortest_path
 
-        Paramètres:
-            - (str) s: sommet
-            - (tuple) v: liste d'adjacence de s
-        """
-        self.adj[s] = v
+    
 
-def _test():
-    """Test de la classe avec des exemples de graphe."""
-    # Graphes non-orientés
-    G = Graphe(
-        {
-            "Jean": ("Jade"),
-            "Jade": ("Paul"),
-            "Paul": ("Thomas", "René"),
-            "Thomas": ("Jean"),
-            "René": ("Marie"),
-            "Marie": ("René")
-        }
-    )
-    Gl = Graphe(
+
+
+###################################################
+#               TESTING AND EXAMPLES              #
+###################################################
+def assertion_test():
+    Gl = Graph(
         {
             "a": ("b", "c"),
             "b": ("a", "d", "e"),
@@ -283,8 +281,37 @@ def _test():
             "h": ("g")
         }
     )
-    # Graphe orienté, liste des successeurs
-    GOs = Graphe(
+
+    assert Gl.get_shortest_path(Gl.paths("g", "c")) == ['g', 'e', 'd', 'c']
+
+def example():
+    """Test de la classe avec des exemples de graphe."""
+    # Undirected Graphs
+    social_links = Graph(
+        {
+            "Jean": ("Jade"),
+            "Jade": ("Paul"),
+            "Paul": ("Thomas", "René"),
+            "Thomas": ("Jean"),
+            "René": ("Marie"),
+            "Marie": ("René")
+        }
+    )
+    # Undirected Graphs - defined with letters
+    lower_example = Graph(
+        {
+            "a": ("b", "c"),
+            "b": ("a", "d", "e"),
+            "c": ("a", "d"),
+            "d": ("b", "c", "e"),
+            "e": ("b", "d", "f", "g"),
+            "f": ("e", "g"),
+            "g": ("e", "f", "h"),
+            "h": ("g")
+        }
+    )
+    # Directed Graph, Successor List
+    upper_example = Graph(
         {
             "A": ("C"),
             "B": ("A"),
@@ -293,16 +320,31 @@ def _test():
             "E": ("D")
         }
     )
-    print(G.getSommets())
-    G.printMatrice()
-    GOs.printMatrice()
-    print("C est de degré " + str(GOs.getDegre("C")))
-    Gl.printMatrice()
-    print(G.BFS("Jean"))
-    print(G.chemins(depart="Jade", arrivee="Paul"))
-    print("Un parcours en largeur du graphe Gl par le sommet 'g' est", Gl.DFS("g"))
-    assert Gl.courtChemin(Gl.chemins("g", "c")) == ['g', 'e', 'd', 'c']
-    print(G.DFS(sommet="Jean"))
+
+    print("----------- social_links Graph --------------"
+          "\nNodes:", \
+          social_links.get_vertices(), \
+          "BFS search with node 'Jean'", \
+          social_links.BFS("Jean")
+    )
+    social_links.show_matrix()
+    
+    print()
+
+    print("----------- upper_example Graph --------------", \
+          f"\nC is of degree {upper_example.get_degree('C')}"
+    )
+    upper_example.show_matrix()
+
+    print()
+    
+    print("----------- lower_example Graph --------------" \
+          f"\nThe list of paths to go from node: 'a' to node: 'g' is:\n{lower_example.paths(departure='a', arrival='g')}" \
+          f"\nA breadth-first traversal of graph Gl from node 'g' is:\n{lower_example.DFS('g')}" \
+          f"\nDFS applied started from node: 'a' is:\n{lower_example.DFS('a')}"
+    )
+    lower_example.show_matrix()
+
 
 if __name__ == "__main__":
-    _test()
+    example()
