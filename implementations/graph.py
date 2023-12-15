@@ -4,24 +4,9 @@
  Author      : Augustin ROLET
  Version     : 1.0
  Copyright   : Copyright Free
- Description : Graph implementation
+ Description : Basic Graph implementation
  ============================================================================
 '''
-
-"""
-Problème et Contrainte:
-    - Méthode paths à vérifier
-
-Liste des méthodes à implémenter restantes:
-    - étiqueté: permet de savoir si les arrêtes ont des valeurs attribuées
-    - valué (= pondéré): permet de savoir si le graphe est valué
-    - extrémités: permet de connaitre les 2 nodes adajcants à une arrête, permet de calculer le cout (ou le temps) d'un transfert par exemple
-    - poids d'une chaine: permet de connaitre le poids d'une chaine si le graphe est valué
-    - connexe ("fortement connexe": graphe orienté): permet de savoir si un graphe est connexe ou non
-"""
-from random import choice
-
-
 class Graph:
     """Class to implement a graph"""
 
@@ -69,7 +54,15 @@ class Graph:
             if self.get_degree(node) != self.get_order()-1:
                 return False
         return True
-
+    
+    def is_labeled(self) -> bool:
+        """Checks if the edges in the graph have assigned values (labels)"""
+        for node, neighbors in self.adj.items():
+            for neighbor in neighbors:
+                if isinstance(neighbor, str) and neighbor != "":
+                    return True
+        return False
+    
     def get_order(self):
         """Returns the order of the graph"""
         return len(self.adj.keys())
@@ -119,15 +112,17 @@ class Graph:
         for line in self.get_matrix():
             print(line)
 
-    def get_pred(self):
+    def get_pred(self) -> dict:
         """Returns the adjacency list of predecessors in a directed graph.
 
         Algorithm:
-            pred: {}
-            For each node in the graph
-                pred[node]: ()
-                For each neighbor of the node
-                    pred[neighbor] += node
+            Initialize an empty dictionary 'pred'.
+            For each node in the graph:
+                If the node is not in 'pred', add it with an empty list.
+                For each neighbor of the node:
+                    If the neighbor is not in 'pred', add it with the current node.
+                    Otherwise, append the current node to the list of neighbors.
+            Return the 'pred' dictionary.
         """
         pred = {}
         vl = self.get_vertices()
@@ -135,27 +130,27 @@ class Graph:
 
         for node in vl:
             if node not in pred.keys():
-                pred[node] = ()
+                pred[node] = []
             for voisin in self.adj[node]:
                 if voisin not in pred.keys():
-                    pred[voisin] = tuple(node)
+                    pred[voisin] = [node]
                 else:
-                    pred[voisin] += tuple(node)
+                    pred[voisin].append(node)
         return pred
     
-    def set_neighbors(self, node, neighbor):
+    def set_neighbors(self, node: str, neighbor: list):
         """Associates the tuple of neighbors 'neighbor' with the specified 'node'.
 
         Parameters:
             - (str) node: The node to which neighbors are associated
-            - (tuple) neighbor: The adjacency list representing neighbors of the node
+            - (list) neighbor: The adjacency list representing neighbors of the node
         """
         self.adj[node] = neighbor
     
     ###################################################
     #     Graph Traversal Algorithms: DFS and BFS     #
     ###################################################
-    def BFS(self, node):
+    def BFS(self, node) -> list:
         """Returns the breadth-first traversal of a graph.
 
         Arguments:
@@ -175,7 +170,7 @@ class Graph:
         parcours, temp = [], [node]
         while temp != []:
             x = temp.pop(0)
-            if type(self.adj[x]) is tuple:
+            if type(self.adj[x]) is list:
                 l = list(self.adj[x])
             else:
                 l = [self.adj[x]]
@@ -185,49 +180,18 @@ class Graph:
                     temp.append(voisin)
         return parcours
 
-    def DFS(self, node):
-        """Returns a breadth-first traversal of a graph.
+    def DFS(self, start, visited=None) -> list:
+        """Returns the list of visited nodes using DFS algorithm"""
+        if visited is None:
+            visited = []
+        visited.append(start)
 
-        Arguments:
-            - (str) node: any node in the graph
+        for neighbor in self.adj[start]:
+            if neighbor not in visited:
+                self.DFS(neighbor, visited)
+        return visited
 
-        Algorithm:
-            visited_nodes: []
-            closed_nodes: []
-            stack: []
-            While stack is not empty
-                tmp: first node in the stack
-                neighbors: [list of unvisited neighbors of tmp]
-                If neighbors is not empty
-                    pop(stack)
-                    closed_nodes + tmp
-                Else
-                    rd_n: random neighbor from neighbors
-                    visited_nodes + rd_n
-                    push(v) into stack
-            Return closed_nodes
-        """
-        visited_nodes, closed_nodes, stack = [node], [], [node]
-        while stack != []:
-            tmp = stack[-1]
-            if type(self.adj[tmp]) is tuple:
-                l = list(self.adj[tmp])
-            else:
-                l = [self.adj[tmp]]
-            
-            # --- Unvisited neighbors --- #
-            neighbors = [voisin for voisin in l if voisin not in visited_nodes]
-            if neighbors != []:
-                rd_n = choice(neighbors)
-                visited_nodes.append(rd_n)
-                stack.append(rd_n)
-            else:
-                stack.pop(-1)
-                closed_nodes.append(tmp)
-        return closed_nodes
-
-
-    def paths(self, departure, arrival):
+    def paths(self, departure, arrival) -> list:
         """Returns the paths from 'departure' to 'arrival'.
 
         Arguments:
@@ -237,7 +201,7 @@ class Graph:
         paths, visited, tmp_stack = [], [departure], [[departure]]
         while tmp_stack != []:
             x = tmp_stack.pop(0)
-            neighbors = self.adj[x[-1]] if type(self.adj[x[-1]]) is tuple else [self.adj[x[-1]]]
+            neighbors = self.adj[x[-1]] if type(self.adj[x[-1]]) is list else [self.adj[x[-1]]]
 
             for neighbor in neighbors:
                 if neighbor == arrival:
@@ -260,67 +224,69 @@ class Graph:
             if len(path) < len(shortest_path):
                 shortest_path = path
         return shortest_path
-
     
-
+    def add_node(self, node: str, values: list):
+        """Adds a node to the graph and its associated values"""
+        if node not in self.get_vertices():
+            self.set_neighbors(node, values)
 
 
 ###################################################
 #               TESTING AND EXAMPLES              #
 ###################################################
-def assertion_test():
-    Gl = Graph(
-        {
-            "a": ("b", "c"),
-            "b": ("a", "d", "e"),
-            "c": ("a", "d"),
-            "d": ("b", "c", "e"),
-            "e": ("b", "d", "f", "g"),
-            "f": ("e", "g"),
-            "g": ("e", "f", "h"),
-            "h": ("g")
-        }
-    )
-
-    assert Gl.get_shortest_path(Gl.paths("g", "c")) == ['g', 'e', 'd', 'c']
-
 def example():
-    """Test de la classe avec des exemples de graphe."""
+    """Testing the class with graph examples"""
     # Undirected Graphs
     social_links = Graph(
         {
-            "Jean": ("Jade"),
-            "Jade": ("Paul"),
-            "Paul": ("Thomas", "René"),
-            "Thomas": ("Jean"),
-            "René": ("Marie"),
-            "Marie": ("René")
+            "Jean": ["Jade"],
+            "Jade": ["Paul"],
+            "Paul": ["Thomas", "René", "Pierre"],
+            "Pierre": [],
+            "Thomas": ["Jean"],
+            "René": ["Marie"],
+            "Marie": ["René"]
         }
     )
     # Undirected Graphs - defined with letters
     lower_example = Graph(
         {
-            "a": ("b", "c"),
-            "b": ("a", "d", "e"),
-            "c": ("a", "d"),
-            "d": ("b", "c", "e"),
-            "e": ("b", "d", "f", "g"),
-            "f": ("e", "g"),
-            "g": ("e", "f", "h"),
-            "h": ("g")
-        }
-    )
-    # Directed Graph, Successor List
-    upper_example = Graph(
-        {
-            "A": ("C"),
-            "B": ("A"),
-            "C": ("B", "D"),
-            "D": ("A", "B"),
-            "E": ("D")
+            "a": ["b", "c"],
+            "b": ["a", "d", "e"],
+            "c": ["a", "d"],
+            "d": ["b", "c", "e"],
+            "e": ["b", "d", "f", "g"],
+            "f": ["e", "g"],
+            "g": ["e", "f", "h"],
+            "h": ["g"]
         }
     )
 
+    # Directed Graph, Successor List
+    upper_example = Graph(
+        {
+            "A": ["C"],
+            "B": ["A"],
+            "C": ["B", "D"],
+            "D": ["A", "B"],
+            "E": ["D"]
+        }
+    )
+
+
+    ###################################################
+    #                  ASSERTION TESTS                #
+    ###################################################
+    assert upper_example.get_degree('C') == 2
+    assert social_links.get_degree('Jean') == 1
+    assert social_links.is_labeled() == True
+    assert lower_example.get_shortest_path(lower_example.paths("g", "c")) == ['g', 'e', 'd', 'c']
+    assert social_links.get_degree('Paul') == 3
+
+
+    ###################################################
+    #                     SHOW CASES                  #
+    ###################################################    
     print("----------- social_links Graph --------------"
           "\nNodes:", \
           social_links.get_vertices(), \
@@ -331,9 +297,7 @@ def example():
     
     print()
 
-    print("----------- upper_example Graph --------------", \
-          f"\nC is of degree {upper_example.get_degree('C')}"
-    )
+    print("----------- upper_example Graph --------------")
     upper_example.show_matrix()
 
     print()
