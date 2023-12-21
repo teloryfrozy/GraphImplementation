@@ -1,8 +1,6 @@
 # Graph Implementation (Python & Ruby) 📈
 
-Welcome to the Graph Implementation repository! 🚀
-
-This repository contains a basic implementation of a non-weighted graph structure in Python and Ruby, providing a fundamental framework for graph operations.
+This repository comprises a basic implementation of a non-weighted graph structure in Python and Ruby, providing essential functionalities for graph operations.
 
 ## Features ✨
 
@@ -15,31 +13,12 @@ This repository contains a basic implementation of a non-weighted graph structur
 - **Ruby Implementation**: Includes a Ruby implementation of the same non-weighted graph functionalities.
 - **NASDAQ100 Visualization Script**: Offers a script to visualize the top companies of NASDAQ100 and their major owners using graph visualization techniques.
 
-## Usage 🚀
+## Usage to Visualize the NASDAQ Graph
 
-1. **Python Implementation**:
-    - Access the `python_graph` directory to explore the Python implementation.
-    - Utilize the functionalities provided to construct and manipulate non-weighted graphs.
+### Python Implementation
+1. Navigate to the `implementations` directory to access the Python implementation.
+2. Utilize the provided functionalities for graph operations in Python.
 
-2. **Ruby Implementation**:
-    - Navigate to the `ruby_graph` directory to delve into the Ruby implementation.
-    - Use the provided methods to perform various graph operations in Ruby.
-
-3. **NASDAQ100 Visualization**:
-    - Run the provided script to visualize the top companies of NASDAQ100 and their top 5 owners in an interactive graph.
-    - Customize the displayed information and adjust graph visualizations based on your preferences.
-
-## How to Run 🏃‍♂️
-
-1. **Python Graph**:
-    - Execute the Python scripts in the `python_graph` directory using your Python interpreter.
-
-2. **Ruby Graph**:
-    - Run the Ruby scripts provided in the `ruby_graph` directory using your Ruby interpreter.
-
-3. **NASDAQ100 Visualization**:
-    - Run the visualization script for NASDAQ100 companies using the provided instructions in the respective directory.
-
----
-
-Feel free to enhance and expand upon this README to provide more detailed instructions, dependencies, or additional functionalities in your repository! 🌟
+### Ruby Implementation
+1. Navigate to the `implementations` directory to delve into the Ruby implementation.
+2. Employ the provided methods to perform various graph operations in Ruby.
