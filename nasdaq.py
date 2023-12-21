@@ -143,7 +143,7 @@ for stock in list_stocks:
         G.add_edge(stock[0].ticker, holder, weight=ownership_percentage)
 
 # Custom the graph
-pos = nx.spring_layout(G, k=0.2) # space between nodes
+pos = nx.spring_layout(G, k=0.15) # space between nodes
 node_sizes = [data['size'] * 80000 for _, data in G.nodes(data=True)]
 node_colors = ['red' if data['type'] == 'stock' else 'green' for _, data in G.nodes(data=True)]
 # edge thickness scaled according to the % of each holder with the stock
