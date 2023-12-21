@@ -14,11 +14,6 @@ This repository comprises a basic implementation of a non-weighted graph structu
 - **NASDAQ100 Visualization Script**: Offers a script to visualize the top companies of NASDAQ100 and their major owners using graph visualization techniques.
 
 ## Usage to Visualize the NASDAQ Graph
-
-### Python Implementation
-1. Navigate to the `implementations` directory to access the Python implementation.
-2. Utilize the provided functionalities for graph operations in Python.
-
-### Ruby Implementation
-1. Navigate to the `implementations` directory to delve into the Ruby implementation.
-2. Employ the provided methods to perform various graph operations in Ruby.
+3. **NASDAQ100 Visualization** 📊
+    - Run the provided script to visualize the top companies of NASDAQ100 and their top 5 owners in an interactive graph. Customize the displayed information and adjust graph visualizations based on your preferences.
+    - Access the respective directory and follow the provided instructions to execute the script for NASDAQ100 visualization. The script scales node and edge sizes based on ownership percentages compared to stocks and other owners.
