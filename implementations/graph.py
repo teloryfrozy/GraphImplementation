@@ -1,12 +1,3 @@
-'''
- ============================================================================
- Name        : graph.py
- Author      : Augustin ROLET
- Version     : 1.0
- Copyright   : Copyright Free
- Description : Basic Graph implementation
- ============================================================================
-'''
 class Graph:
     """Class to implement a graph"""
 
