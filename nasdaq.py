@@ -83,7 +83,7 @@ def get_top_n_stocks(n: int) -> list:
 
 
 ################### User choices ###################
-n = 100
+n = 25
 print(f"{Fore.BLUE}Collecting the top {n} stocks by market capitalization from NASDAQ100{Style.RESET_ALL}")
 list_stocks = get_top_n_stocks(n)
 print(f"{Fore.GREEN}Stocks loaded successfully!{Style.RESET_ALL}")
@@ -143,8 +143,8 @@ for stock in list_stocks:
         G.add_edge(stock[0].ticker, holder, weight=ownership_percentage)
 
 # Custom the graph
-pos = nx.spring_layout(G, k=1.8) # space between nodes
-node_sizes = [data['size'] * 200 for _, data in G.nodes(data=True)]
+pos = nx.spring_layout(G, k=0.2) # space between nodes
+node_sizes = [data['size'] * 80000 for _, data in G.nodes(data=True)]
 node_colors = ['red' if data['type'] == 'stock' else 'green' for _, data in G.nodes(data=True)]
 # edge thickness scaled according to the % of each holder with the stock
 edge_weights = [data['weight'] * 100 for _, _, data in G.edges(data=True)]
