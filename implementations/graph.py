@@ -122,11 +122,11 @@ class Graph:
         for node in vl:
             if node not in pred.keys():
                 pred[node] = []
-            for voisin in self.adj[node]:
-                if voisin not in pred.keys():
-                    pred[voisin] = [node]
+            for neighbor in self.adj[node]:
+                if neighbor not in pred.keys():
+                    pred[neighbor] = [node]
                 else:
-                    pred[voisin].append(node)
+                    pred[neighbor].append(node)
         return pred
     
     def set_neighbors(self, node: str, neighbor: list):
@@ -158,18 +158,18 @@ class Graph:
                         Add neighbor to tmp
             Return traversal
         """
-        parcours, temp = [], [node]
+        traversal, temp = [], [node]
         while temp != []:
             x = temp.pop(0)
             if type(self.adj[x]) is list:
                 l = list(self.adj[x])
             else:
                 l = [self.adj[x]]
-            parcours.append(x)
-            for voisin in l:
-                if voisin not in temp and voisin not in parcours:
-                    temp.append(voisin)
-        return parcours
+            traversal.append(x)
+            for neighbor in l:
+                if neighbor not in temp and neighbor not in traversal:
+                    temp.append(neighbor)
+        return traversal
 
     def DFS(self, start, visited=None) -> list:
         """Returns the list of visited nodes using DFS algorithm"""
